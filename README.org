@@ -1,0 +1,6 @@
+#+TITLE: Cytoscape wrapper for justpy
+
+Base libs:
+
+- [[https://js.cytoscape.org][Cytoscape.js]]
+- [[https://justpy.io][JustPy]]
