@@ -2,15 +2,15 @@ import justpy as jp
 
 class Cytoscape(jp.JustpyBaseComponent):
 
-    vue_type = 'cytoscapejs'
+    vue_type = 'cytoscapejp'
 
     def __init__(self, **kwargs):
-
         self.options = jp.Dict()
         self.classes = ''
         self.style = ''
-        self.width = 400
-        self.height = 200
+        self.elements = []
+        self.graphstyle = []
+        self.layout = {}
         self.clear = False
         self.show = True
         self.event_propagation = True
@@ -35,12 +35,12 @@ class Cytoscape(jp.JustpyBaseComponent):
         d['show'] = self.show
         d['classes'] = self.classes
         d['style'] = self.style
+        d['elements'] = self.elements
+        d['graphstyle'] = self.graphstyle
+        d['layout'] = self.layout
         d['event_propagation'] = self.event_propagation
         d['def'] = self.options
         d['events'] = self.events
-        d['width'] = self.width
-        d['height'] = self.height
         d['clear'] = self.clear
         d['options'] = self.options
         return d
-

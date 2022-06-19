@@ -1,6 +1,6 @@
 Vue.component('cytoscapejp', {
     template:
-        `<div  v-bind:id="jp_props.id" :class="jp_props.classes"  :style="jp_props.style"  ></div>`,
+    `<div  v-bind:id="jp_props.id" :class="jp_props.classes"  :style="jp_props.style"></div>`,
     data: function () {
         return {
             graph: null
@@ -8,10 +8,12 @@ Vue.component('cytoscapejp', {
     },
     methods: {
         graph_create() {
-            this.graph = this.$props.jp_props.graph;
-            //const chart_obj = JSON.parse(this.$props.jp_props.chart);
-            //Bokeh.embed.embed_item(chart_obj, 'bokeh' + this.$props.jp_props.id.toString());
-            //katex.render(this.$props.jp_props.equation, document.getElementById(this.$props.jp_props.id.toString()), this.$props.jp_props.options);
+            var cy = new cytoscape({
+                container: document.getElementById(this.$props.jp_props.id.toString()), // container to render in
+                elements: this.$props.jp_props.elements,
+                style: this.$props.jp_props.graphstyle,
+                layout: this.$props.jp_props.layout
+            })
         }
     },
     mounted() {
@@ -19,7 +21,6 @@ Vue.component('cytoscapejp', {
     },
     updated() {
         if (this.graph != this.$props.jp_props.graph) {
-            // document.getElementById('bokeh' + this.$props.jp_props.id.toString()).innerHTML = "";
             this.graph_create();
         }
     },
@@ -27,4 +28,3 @@ Vue.component('cytoscapejp', {
         jp_props: Object
     }
 });
-
