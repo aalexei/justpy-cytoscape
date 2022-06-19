@@ -13,7 +13,8 @@ Vue.component('cytoscapejp', {
                 elements: this.$props.jp_props.elements,
                 style: this.$props.jp_props.graphstyle,
                 layout: this.$props.jp_props.layout
-            })
+            });
+            comp_dict[this.$props.jp_props.id] = cy;
         }
     },
     mounted() {
