@@ -14,7 +14,29 @@ Vue.component('cytoscapejp', {
                 style: this.$props.jp_props.graphstyle,
                 layout: this.$props.jp_props.layout
             });
+            // Register component
             comp_dict[this.$props.jp_props.id] = cy;
+
+            var events = this.$props.jp_props.events;
+            var props = this.$props;
+            function onJson() {
+                    if (events.includes('onJson')) {
+                        var data = cy.json();
+                        var e = {
+                            'event_type': 'onJson',
+                            'id': props.jp_props.id,
+                            'class_name': props.jp_props.class_name,
+                            'html_tag': props.jp_props.html_tag,
+                            'vue_type': props.jp_props.vue_type,
+                            'page_id': page_id,
+                            'websocket_id': websocket_id,
+                            'data': data
+                        };
+                        send_to_server(e, 'event');
+                    }
+            };
+
+            cy.onJson = onJson;
         }
     },
     mounted() {
