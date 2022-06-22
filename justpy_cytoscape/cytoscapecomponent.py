@@ -3,6 +3,8 @@ import justpy as jp
 class Cytoscape(jp.JustpyBaseComponent):
 
     vue_type = 'cytoscapejp'
+    req_id=0
+    futures={}
 
     def __init__(self, **kwargs):
         self.options = jp.Dict()
@@ -17,7 +19,7 @@ class Cytoscape(jp.JustpyBaseComponent):
         self.pages = {}
         kwargs['temp'] = False  # Force an id to be assigned
         super().__init__(**kwargs)
-        self.allowed_events = ['onEnd', 'onBegin']
+        self.allowed_events = ['onEnd', 'onBegin', 'onJson']
         if type(self.options) != jp.Dict:
             self.options = jp.Dict(self.options)
         self.initialize(**kwargs)
@@ -27,6 +29,35 @@ class Cytoscape(jp.JustpyBaseComponent):
 
     def react(self, data):
         pass
+
+    async def run_method_get_output(self, method, websocket):
+        # adapted from https://github.com/elimintz/justpy/discussions/240
+        self.req_id += 1
+        req_id = f'cyto_{self.req_id}'
+        self.futures[req_id]= asyncio.get_running_loop().create_future()
+
+        #await webpage.run_javascript(method,request_id=req_id,send=True)
+        await websocket.send_json(
+            {'type': 'run_javascript',
+             'data':f"Object({{value:comp_dict['{self.id}'].{method}}})",
+             'request_id': req_id,
+             'send':True}
+        )
+
+        result = await self.futures[req_id]
+        return result['value']
+
+    async def handle_page_event(self, msg):
+        # adapted from https://github.com/elimintz/justpy/discussions/240
+        if msg.event_type != 'result_ready':
+            return False
+        if not msg.request_id in self.futures:
+            return False
+        fut = self.futures[msg.request_id]
+        self.futures.pop(msg.request_id)
+        if not fut.cancelled():
+            fut.set_result(msg.result.copy())
+        return True
 
     async def reset(self, websocket):
         '''Reset the graph to the default zoom level and panning position.'''
