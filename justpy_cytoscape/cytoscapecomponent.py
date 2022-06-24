@@ -36,16 +36,14 @@ class Cytoscape(jp.JustpyBaseComponent):
         req_id = f'cyto_{self.req_id}'
         self.futures[req_id]= asyncio.get_running_loop().create_future()
 
-        #await webpage.run_javascript(method,request_id=req_id,send=True)
         await websocket.send_json(
             {'type': 'run_javascript',
-             'data':f"Object({{value:comp_dict['{self.id}'].{method}}})",
+             'data':f"Object(comp_dict['{self.id}'].{method})",
              'request_id': req_id,
              'send':True}
         )
 
-        result = await self.futures[req_id]
-        return result['value']
+        return await self.futures[req_id]
 
     async def handle_page_event(self, msg):
         # adapted from https://github.com/elimintz/justpy/discussions/240
