@@ -19,7 +19,7 @@ class Cytoscape(jp.JustpyBaseComponent):
         self.pages = {}
         kwargs['temp'] = False  # Force an id to be assigned
         super().__init__(**kwargs)
-        self.allowed_events = ['onEnd', 'onBegin', 'onJson']
+        self.allowed_events = ['free','tap']
         if type(self.options) != jp.Dict:
             self.options = jp.Dict(self.options)
         self.initialize(**kwargs)

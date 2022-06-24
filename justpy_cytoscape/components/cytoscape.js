@@ -1,30 +1,50 @@
 Vue.component('cytoscapejp', {
     template:
     `<div  v-bind:id="jp_props.id" :class="jp_props.classes"  :style="jp_props.style"></div>`,
-    data: function () {
-        return {
-            graph: null
-        }
-    },
     methods: {
         graph_create() {
-            var cy = new cytoscape({
+            this.elements = this.$props.jp_props.elements;
+            cyto = new cytoscape({
                 container: document.getElementById(this.$props.jp_props.id.toString()), // container to render in
                 elements: this.$props.jp_props.elements,
                 style: this.$props.jp_props.graphstyle,
                 layout: this.$props.jp_props.layout
             });
             // Register component
-            comp_dict[this.$props.jp_props.id] = cy;
+            comp_dict[this.$props.jp_props.id] = cyto;
+
+            // Bind events
+            // console.log('events:',this.$props.jp_props.events);
+            var events = this.$props.jp_props.events;
+            var props = this.$props;
+            events.forEach(function(ename){
+                // console.log('Binding event:',ename);
+                cyto.on(ename, function(ev){
+                    var target = ev.target;
+                    // console.log('sending cyto event:', ev.type, target, ev);
+                    const edata = {
+                        'event_type': ename,
+                        'target_id': null,
+                        'id': props.jp_props.id,
+                        'page_id': page_id,
+                        'websocket_id': websocket_id
+                    };
+                    // Add target_id if it exists
+                    try { edata.target_id = target.id() }
+                    catch (err) {}
+                    send_to_server(edata, 'event');
+                });
+            });
         }
     },
     mounted() {
+        var cyto; // create a global variable to debug on console
         this.graph_create();
     },
     updated() {
-        if (this.graph != this.$props.jp_props.graph) {
-            this.graph_create();
-        }
+        // if (this.graph != this.$props.jp_props.graph) {
+        //     this.graph_create();
+        // }
     },
     props: {
         jp_props: Object
