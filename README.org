@@ -151,3 +151,62 @@ jp.justpy(cyto_test)
 #+end_src
 
 :Node "a" moved to {'x': 131.17751479289942, 'y': 123.07396449704142}
+
+* Plugins
+
+This is a bit hackish but possible.
+
+When the ~Cytoscape~ object is instantiated you can pass in a list of strings in the attribute ~plugins~. The strings should be javascript code to register and configure plugins (they get passed to ~eval()~). Function calls and events for the plugins are available on the python cyto object as usual. The js cytograph instance is available in the variable ~cyto~ if you need to bind callbacks.
+
+e.g. after installing [[https://github.com/cytoscape/cytoscape.js-cxtmenu][ctxmenu]] and [[https://github.com/cytoscape/cytoscape.js-compound-drag-and-drop][compound=drag-and-drop]] to the ~static/~ dir,
+#+begin_src python
+ctxmenuconfig = """
+cyto.cxtmenu({
+    selector: 'core',
+
+    commands: [
+        { content: 'Fit',
+        select: function(){
+            cyto.fit();
+        }},
+
+        { content: 'bg',
+        select: function(){
+            console.log( 'bg' );
+            const edata = {
+                'event_type': 'ctxmenu',
+                'data': 'bg',
+                'id': props.jp_props.id,
+                'page_id': page_id,
+                'websocket_id': websocket_id
+            };
+            send_to_server(edata, 'event');
+        }}
+]});
+"""
+
+def echo(*args):
+    print(args)
+
+def cyto_test():
+    wp = jp.WebPage()
+    wp.head_html = '''
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.1/cytoscape.min.js"></script>
+    <script src="/static/cytoscape-cxtmenu.js"></script>
+    <script src="/static/cytoscape-compound-drag-and-drop.js"></script>
+    '''
+    wp.cyto = Cytoscape(a=wp,
+                     style = 'background-color: #fefefe; border: 1px solid; width: 400px; height: 400px;',
+                     classes='m-2',
+                     elements = elements,
+                     graphstyle = graphstyle,
+                     layout = layout,
+                     allowed_events = ['ctxmenu','free','tap'],
+                     plugins = [ctxmenuconfig, "cyto.compoundDragAndDrop({})"],
+                     )
+
+    wp.cyto.on('ctxmenu', echo)
+    return wp
+
+jp.justpy(cyto_test)
+#+end_src
