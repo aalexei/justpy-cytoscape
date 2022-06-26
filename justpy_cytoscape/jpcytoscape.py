@@ -1,4 +1,5 @@
 import justpy as jp
+import asyncio
 
 class Cytoscape(jp.JustpyBaseComponent):
 
