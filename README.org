@@ -60,3 +60,55 @@ def cyto_test():
 
 jp.justpy(cyto_test)
 #+end_src
+
+* Calling cytoscape methods
+
+Two methods are defined on ~Cytoscape~ class for calling the underlying ~js~ methods. The ~run_method~ function (from ~JustPy~) and ~run_method_get_output~ for collecting results.
+
+e.g. adding a buttn to reset zoom and pan:
+#+begin_src python
+async def button_click(self, msg):
+    await msg.page.cyto.run_method('reset()', msg.websocket)
+
+def cyto_test():
+    wp = jp.WebPage()
+    wp.head_html = '''
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.1/cytoscape.min.js"></script>
+    '''
+    wp.cyto = Cytoscape(a=wp,
+                     style = 'background-color: #fefefe; border: 1px solid; width: 400px; height: 400px;',
+                     classes='m-2',
+                     elements = elements,
+                     graphstyle = graphstyle,
+                     layout = layout,
+                     )
+    button_classes = 'w-32 mr-2 mb-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full'
+    b = jp.Button(text=f'Reset zoom', a=wp, classes=button_classes, click=button_click)
+    return wp
+
+jp.justpy(cyto_test)
+#+end_src
+
+Pass in parameters by structuring the argument of the method as a string.
+e.g.
+#+begin_src python
+async def button_click(self, msg):
+    cy = msg.page.cyto
+    ws = msg.websocket
+    await cy.run_method('zoom(2)', ws)
+    await cy.run_method("layout({'name':'random'}).run()", ws)
+    x = 100
+    y = 10
+    await cy.run_method(f'pan({{x:{x}, y:{y}}})', ws)
+#+end_src
+
+Use ~run_method_get_output~ to obtain the output. Stacking function calls and using selectors works.
+e.g.
+#+begin_src python
+async def button_click(self, msg):
+    cy = msg.page.cyto
+    ws = msg.websocket
+    a=await cy.run_method_get_output('json()', ws)
+    a=await cy.run_method_get_output('getElementById("a").position()', ws)
+    a=await cy.run_method_get_output('$("#a").position()', ws)
+#+end_src
