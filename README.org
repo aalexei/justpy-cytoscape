@@ -1,6 +1,62 @@
-#+TITLE: Cytoscape wrapper for justpy
+#+TITLE: Cytoscape component for JustPy
+
+This is a component for [[https://justpy.io][JustPy]] to place a [[https://js.cytoscape.org][Cytoscape]] graph on a page and interact with it.
 
 Base libs:
 
 - [[https://js.cytoscape.org][Cytoscape.js]]
 - [[https://justpy.io][JustPy]]
+
+
+* Installation
+
+Place the javascript component in your applications =/static/components/= directory (the default is the directory the application is run form).
+
+Place the python module ~jpcytoscape.py~ somewhere on your python's =PATH=.
+
+* Basic Usage
+
+Define a list of nodes and edges, some styling directives, and the layout. Add the component as you would any other ~JustPy~ component.
+
+#+begin_src python
+import justpy as jp
+from jpcytoscape import Cytoscape
+
+elements = [
+    {'data': { 'id': 'a' }},
+    {'data': { 'id': 'b' }},
+    {'data': { 'id': 'c' }},
+    {'data': { 'id': 'ab', 'source': 'a', 'target': 'b' }},
+    {'data': { 'id': 'ac', 'source': 'a', 'target': 'c' }},
+  ]
+
+graphstyle = [
+    {'selector': 'node',
+      'style': {
+        'label': 'data(id)'
+      }},
+    {'selector': 'edge',
+      'style': {
+        'width': 3,
+        'target-arrow-shape': 'triangle',
+      }},
+  ]
+
+layout = {'name': 'grid', 'rows': 2}
+
+def cyto_test():
+    wp = jp.WebPage()
+    wp.head_html = '''
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.21.1/cytoscape.min.js"></script>
+    '''
+    cyto = Cytoscape(a=wp,
+                     style = 'background-color: #fefefe; border: 1px solid; width: 400px; height: 400px;',
+                     classes='m-2',
+                     elements = elements,
+                     graphstyle = graphstyle,
+                     layout = layout,
+                     )
+    return wp
+
+jp.justpy(cyto_test)
+#+end_src
