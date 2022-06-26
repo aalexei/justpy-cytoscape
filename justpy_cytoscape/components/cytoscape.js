@@ -35,6 +35,14 @@ Vue.component('cytoscapejp', {
                     send_to_server(edata, 'event');
                 });
             });
+
+            this.$props.jp_props.plugins.forEach(function(plugin_config){
+                //try { edata.target_id = target.id() }
+                //console.log('plugin_config:',plugin_config);
+                eval(plugin_config);
+                //}
+                // catch (err) {}
+            });
         }
     },
     mounted() {
@@ -42,9 +50,6 @@ Vue.component('cytoscapejp', {
         this.graph_create();
     },
     updated() {
-        // if (this.graph != this.$props.jp_props.graph) {
-        //     this.graph_create();
-        // }
     },
     props: {
         jp_props: Object
