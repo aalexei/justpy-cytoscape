@@ -12,7 +12,9 @@ Base libs:
 
 Place the javascript component in your applications =/static/components/= directory (the default =/static/= dir is the directory the application is run form).
 
-Place the python module ~jpcytoscape.py~ somewhere on your python's =PATH=.
+Place the python module ~cytoscape.py~ somewhere on your python's =PATH=.
+
+Easiest way to install is to clone the git repo to =/static/src/= and symlink the two files as required above.
 
 * Basic Usage
 
@@ -20,7 +22,7 @@ Define a list of nodes and edges, some styling directives, and the layout. Add t
 
 #+begin_src python
 import justpy as jp
-from jpcytoscape import Cytoscape
+from cytoscape import Cytoscape
 
 elements = [
     {'data': { 'id': 'a' }},
