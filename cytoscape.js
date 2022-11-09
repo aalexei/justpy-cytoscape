@@ -8,7 +8,10 @@ Vue.component('cytoscapejp', {
                 container: document.getElementById(this.$props.jp_props.id.toString()), // container to render in
                 elements: this.$props.jp_props.elements,
                 style: this.$props.jp_props.graphstyle,
-                layout: this.$props.jp_props.layout
+                layout: this.$props.jp_props.layout,
+                zoom: this.$props.jp_props.zoom,
+                minZoom: this.$props.jp_props.minZoom,
+                maxZoom: this.$props.jp_props.maxZoom
             });
             // Register component
             comp_dict[this.$props.jp_props.id] = cyto;

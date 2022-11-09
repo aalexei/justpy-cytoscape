@@ -17,6 +17,9 @@ class Cytoscape(jp.JustpyBaseComponent):
         self.layout = {}
         self.clear = False
         self.show = True
+        self.zoom = 1
+        self.minZoom = 1E-50
+        self.maxZoom = 1E50
         self.event_propagation = True
         self.pages = {}
         kwargs['temp'] = False  # Force an id to be assigned
@@ -71,6 +74,9 @@ class Cytoscape(jp.JustpyBaseComponent):
         d['classes'] = self.classes
         d['style'] = self.style
         d['elements'] = self.elements
+        d['zoom'] = self.zoom
+        d['minZoom'] = self.minZoom
+        d['maxZoom'] = self.maxZoom
         d['graphstyle'] = self.graphstyle
         d['layout'] = self.layout
         d['plugins'] = self.plugins
